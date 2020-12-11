@@ -73,7 +73,7 @@ namespace ParrelSync
         /// <returns></returns>
         public static Project CreateCloneFromPath(string sourceProjectPath)
         {
-            Project sourceProject = new Project(sourceProjectPath);
+            Project sourceProject = new Project(sourceProjectPath, Preferences.CustomFoldersPref.Value.Split(';'));
 
             string cloneProjectPath = null;
 
@@ -96,7 +96,7 @@ namespace ParrelSync
                 return null;
             }
 
-            Project cloneProject = new Project(cloneProjectPath);
+            Project cloneProject = new Project(cloneProjectPath, Preferences.CustomFoldersPref.Value.Split(';'));
 
             Debug.Log("Start cloning project, original project: " + sourceProject + ", clone project: " + cloneProject);
 
@@ -108,6 +108,14 @@ namespace ParrelSync
             ClonesManager.LinkFolders(sourceProject.packagesPath, cloneProject.packagesPath);
             ClonesManager.LinkFolders(sourceProject.autoBuildPath, cloneProject.autoBuildPath);
             ClonesManager.LinkFolders(sourceProject.localPackages, cloneProject.localPackages);
+
+            if(sourceProject.customFolders != null){
+                for (int i = 0; i < sourceProject.customFolders.Length; i++)
+                {
+                    ClonesManager.LinkFolders(sourceProject.customFolders[i], cloneProject.customFolders[i]);
+                }
+            }
+          
             
             ClonesManager.RegisterClone(cloneProject);
 

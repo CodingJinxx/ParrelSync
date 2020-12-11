@@ -16,6 +16,7 @@ namespace ParrelSync
         public string packagesPath;
         public string autoBuildPath;
         public string localPackages;
+        public string[] customFolders;
 
         char[] separator = new char[1] { '/' };
 
@@ -38,6 +39,11 @@ namespace ParrelSync
             ParsePath(path);
         }
 
+        public Project(string path, string[] customFolders) {
+            this.customFolders = customFolders;
+            ParsePath(path);
+        }
+
 
         /// <summary>
         /// Create a new object with the same settings
@@ -56,6 +62,7 @@ namespace ParrelSync
             newProject.packagesPath = packagesPath;
             newProject.autoBuildPath = autoBuildPath;
             newProject.localPackages = localPackages;
+            newProject.customFolders = customFolders;
 
 
             return newProject;
@@ -109,6 +116,12 @@ namespace ParrelSync
             packagesPath = projectPath + "/Packages";
             autoBuildPath = projectPath + "/AutoBuild";
             localPackages = projectPath + "/LocalPackages";
+            if(customFolders != null){
+                for (int i = 0; i < this.customFolders.Length; i++)
+                {
+                    customFolders[i] = projectPath + "/" + customFolders[i];
+                }
+            }
         }
     }
 }

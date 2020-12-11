@@ -47,6 +47,44 @@ namespace ParrelSync
         }
     }
 
+     public class StringPreference
+    {
+        public string key { get; private set; }
+        public string defaultValue { get; private set; }
+        public StringPreference(string key, string defaultValue)
+        {
+            this.key = key;
+            this.defaultValue = defaultValue;
+        }
+        private string valueCache = null;
+
+        public string Value
+        {
+            get
+            {
+                if (valueCache == null)
+                    valueCache = EditorPrefs.GetString(key, defaultValue);
+
+                return (string)valueCache;
+            }
+            set
+            {
+                if (valueCache == value)
+                    return;
+
+                EditorPrefs.SetString(key, value);
+                valueCache = value;
+                Debug.Log("Editor preference updated. key: " + key + ", value: " + value);
+            }
+        }
+
+        public void ClearValue()
+        {
+            EditorPrefs.DeleteKey(key);
+            valueCache = null;
+        }
+    }
+
     public class Preferences : EditorWindow
     {
         [MenuItem("ParrelSync/Preferences", priority = 1)]
@@ -67,6 +105,7 @@ namespace ParrelSync
         /// also check is the is the UnityLockFile being opened.
         /// </summary>
         public static BoolPreference AlsoCheckUnityLockFileStaPref = new BoolPreference("ParrelSync_CheckUnityLockFileOpenStatus", true);
+        public static StringPreference CustomFoldersPref = new StringPreference("ParrelSync_CustomFolders", "");
 
         private void OnGUI()
         {
@@ -99,6 +138,9 @@ namespace ParrelSync
                     ),
                     AlsoCheckUnityLockFileStaPref.Value);
             }
+            GUILayout.Label("Custom Folders");
+            CustomFoldersPref.Value = EditorGUILayout.TextField(CustomFoldersPref.Value);
+
             GUILayout.EndVertical();
             if (GUILayout.Button("Reset to default"))
             {
